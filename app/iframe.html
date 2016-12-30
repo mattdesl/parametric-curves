@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, shrink-to-fit=0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>iFrame test</title>
+  <style>
+  body {
+    margin: 0;
+  }
+  iframe {
+    width: 100%;
+    outline: 0;
+    border: 0;
+    display: block;
+  }
+  .content {
+    height: 800px;
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+  }
+  </style>
+</head>
+<body>
+  <div class="content">(more content)</div>
+
+  <iframe src="index.html" id="curve-demo" scrolling="no"></iframe>
+  <div class="content">(more content)</div>
+  <script>
+    var iframe = document.querySelector('iframe');
+    iframe.height = window.innerHeight;
+  </script>
+</body>
+</html>

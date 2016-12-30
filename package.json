@@ -1,0 +1,92 @@
+{
+  "name": "parametric-curves",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "license": "MIT",
+  "semistandard": {
+    "global": [
+      "THREE"
+    ]
+  },
+  "author": {
+    "name": "Matt DesLauriers",
+    "email": "dave.des@gmail.com",
+    "url": "https://github.com/mattdesl"
+  },
+  "dependencies": {
+    "array-shuffle": "^1.0.1",
+    "clamp": "^1.0.1",
+    "dat-gui": "^0.5.0",
+    "defined": "^1.0.0",
+    "dom-css": "^2.1.0",
+    "eases": "^1.0.8",
+    "element-class": "^0.2.2",
+    "glsl-aastep": "^1.0.1",
+    "glsl-blend-soft-light": "^1.0.5",
+    "glsl-dither": "^1.0.1",
+    "glsl-easings": "^1.0.0",
+    "glsl-face-normal": "^1.0.2",
+    "glsl-fast-gaussian-blur": "^1.0.2",
+    "glsl-fxaa": "^3.0.0",
+    "glsl-hash-blur": "^1.0.3",
+    "glsl-luma": "^1.0.1",
+    "glsl-lut": "^1.1.0",
+    "glsl-noise": "0.0.0",
+    "glsl-pi": "^1.0.0",
+    "glsl-random": "0.0.5",
+    "glslify-hex": "^2.1.1",
+    "load-img": "^1.0.0",
+    "lodash.throttle": "^4.1.1",
+    "new-array": "^1.0.0",
+    "object-assign": "^4.1.0",
+    "orbit-controls": "^1.1.1",
+    "query-string": "^4.2.3",
+    "raf-loop": "^1.1.3",
+    "seed-random": "^2.2.0",
+    "simplex-noise": "^2.2.0",
+    "smoothstep": "^1.0.1",
+    "soundbank-reverb": "^1.1.2",
+    "three-buffer-vertex-data": "^1.1.0",
+    "three-copyshader": "0.0.1",
+    "three-effectcomposer": "0.0.1",
+    "three-shader-fxaa": "^5.1.1",
+    "touches": "^1.2.0",
+    "tweenr": "^2.2.0",
+    "web-audio-player": "^1.2.1",
+    "xhr": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.18.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.1",
+    "budo": "^9.2.2",
+    "cross-env": "^3.1.3",
+    "glslify": "^6.0.1",
+    "rimraf": "^2.5.4",
+    "surge": "^0.18.0",
+    "uglify-js": "^2.7.5",
+    "uglifyjs": "^2.4.10",
+    "unreachable-branch-transform": "^0.5.1"
+  },
+  "glslify": {
+    "transform": [
+      "glslify-hex"
+    ]
+  },
+  "scripts": {
+    "start": "budo index.js:bundle.js --live --dir app -- -t babelify -t glslify",
+    "deploy:upload": "surge -p app -d parametric-curves.surge.sh",
+    "deploy": "npm run build && npm run deploy:upload",
+    "build": "browserify index.js -t babelify -t glslify | uglifyjs -m -c warnings=false > app/bundle.js"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mattdesl/parametric-curves.git"
+  },
+  "homepage": "https://github.com/mattdesl/parametric-curves",
+  "bugs": {
+    "url": "https://github.com/mattdesl/parametric-curves/issues"
+  }
+}

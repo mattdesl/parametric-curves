@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, shrink-to-fit=0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>parametric-ribbons</title>
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:600" rel="stylesheet">
+  <style>
+  canvas { display: block; }
+  body {
+    margin: 0;
+  }
+  .noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Chrome/Safari/Opera */
+       -khtml-user-select: none; /* Konqueror */
+         -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    not supported by any browser */
+  }
+  .clickable {
+    cursor: pointer;
+  }
+  .grab {
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+  }
+  .grabbing {
+     cursor: -webkit-grabbing;
+    cursor: -moz-grabbing; 
+  }
+  .info {
+    pointer-events: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-family: 'Source Sans Pro';
+    font-weight: 600;
+    letter-spacing: 2px;
+    font-size: 12px;
+    -webkit-font-smoothing: antialiased;
+  }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" class="noselect"></canvas>
+  <div class="info" class="noselect">TAP TO CHANGE COLORS</div>
+  <script src="vendor/three.js"></script>
+  <script src="vendor/RGBELoader.js"></script>
+  <script src="vendor/HDRCubeTextureLoader.js"></script>
+  <script src="vendor/PMREMGenerator.js"></script>
+  <script src="vendor/PMREMCubeUVPacker.js"></script>
+  <script src="bundle.js"></script>
+</body>
+</html>
