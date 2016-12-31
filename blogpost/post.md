@@ -10,13 +10,19 @@ Instead, let's what we can accomplish with just a vertex shader. The technique p
 
 <iframe src="https://parametric-curves.surge.sh/" style="border: 0; width: 1px; min-width: 100%;" scrolling="no" height="400px" scroll="auto"></iframe>
 
-I used this technique for the swirling 3D lines in my [Christmas Experiment](christmasexperiments.com/2016/19/sugar/) this year. The experiment also used parametric equations for the bouncing surface, so the concepts presented in this post can carry over to other areas.
+I used this technique for the swirling 3D lines in my [Christmas Experiment](https://christmasexperiments.com/2016/19/sugar/) this year. The experiment also used parametric equations for the bouncing surface, so the concepts presented in this post can carry over to other areas.
 
 ![xmas](https://github.com/mattdesl/parametric-curves/blob/master/blogpost/xmas.jpg?raw=true)
 
 I'm also using volumetric lines for a "neon tube" effect in an upcoming demo; you can see some screenshots here:
 
 ![volume](https://github.com/mattdesl/parametric-curves/blob/master/blogpost/demo1.jpg?raw=true)
+
+# Source Code
+
+The source code for the above WebGL demo can be found below:
+
+https://github.com/mattdesl/parametric-curves/
 
 # Building the Tube Geometry
 
@@ -177,7 +183,7 @@ void createTube (float t, vec2 volume, out vec3 pos, out vec3 normal) {
 
 # The Fragment Shader
 
-The fragment shader is fairly basic: it decides whether to use the smooth normal we computed above, or whether to approximate a flat normal using `glsl-face-normal`.
+The fragment shader is fairly basic: it decides whether to use the smooth normal we computed above, or whether to approximate a flat normal using [glsl-face-normal](https://github.com/stackgl/glsl-face-normal).
 
 The "shading" is just rendering the Y-normal in a 0 to 1 range to give the tube some depth.
 
@@ -337,6 +343,8 @@ And, lastly, we add some fake rim lighting in the fragment step and mix it with 
   diffuse += rim * 2.0;
   ...
 ```
+
+The final shaders (see [here](https://github.com/mattdesl/parametric-curves/tree/master/lib/shaders)) also includes a small effect for color transitions.
 
 # Gotchas
 
