@@ -358,6 +358,8 @@ The final vertex shader provides a `ROBUST` define flag that solves this issue, 
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/frenet2.jpg?raw=true" width="40%" />
 
+<sup>See [here](https://github.com/mattdesl/parametric-curves/blob/954f1a8d865537543b832a8bf0e49363b8a90071/lib/components/createTubes.js#L30-L31) to enable the flag.</sup>
+
 A similar problem arises with exactly straight lines, in which will disappear entirely using our fast Frenet-Serret approach.
 
 ```glsl
