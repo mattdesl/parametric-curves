@@ -1,10 +1,10 @@
-## Shaping Curves with Parametric Equations
+# Shaping Curves with Parametric Equations
 
 ![intro](https://github.com/mattdesl/parametric-curves/blob/master/blogpost/demo2.jpg?raw=true)
 
-This post explores a technique to render volumetric curves on the GPU — ideal for shapes like ribbons, tubes and rope. The curves are defined by a parametric equation in the vertex shader, allowing us to animate hundreds and even thosuands of curves with minimal overhead.
+This post explores a technique to render volumetric curves on the GPU — ideal for shapes like ribbons, tubes and rope. The curves are defined by a parametric equation in the vertex shader, allowing us to animate hundreds and even thousands of curves with minimal overhead.
 
-Parametric curves aren't a novel idea in WebGL; ThreeJS already supports something called ExtrudeGeometry. You can read about some of its implementation details [here](). This class can be used to extrude a 3D curve or path into a volumetric line, like a 3D tube. However, since the code runs on the CPU and generates a new geometry, it isn't well suited for animating the curve every frame, let alone several hundred curves.
+Parametric curves aren't a novel idea in WebGL; ThreeJS already supports something called ExtrudeGeometry. You can read about some of its implementation details [here](http://www.lab4games.net/zz85/blog/2012/04/24/spline-extrusions-tubes-and-knots-of-sorts/). This class can be used to extrude a 3D curve or path into a volumetric line, like a 3D tube. However, since the code runs on the CPU and generates a new geometry, it isn't well suited for animating the curve every frame, let alone several hundred curves.
 
 Instead, let's what we can accomplish with just a vertex shader. The technique presented here has various downsides and isn't very robust, but it can look great in certain cases and tends to be fast to compute. At the end of this post, we'll end up with something like the WebGL scene below — use your mouse on desktop or tap on mobile to interact with it.
 
@@ -18,7 +18,7 @@ I'm also using volumetric lines for a "neon tube" effect in an upcoming demo; yo
 
 ![volume](https://github.com/mattdesl/parametric-curves/blob/master/blogpost/demo1.jpg?raw=true)
 
-## Building the Tube Geometry
+# Building the Tube Geometry
 
 For this to work, we're going to re-purpose a `THREE.CylinderGeometry` so that our UVs, end caps and faces all line up like a regular cylinder geometry. If it goes to plan, we should be able to render a simple cylinder with our volumetric curve code.
 
@@ -52,7 +52,7 @@ for each face in baseGeometry:
     positions.push(vertex.x);
 ```
 
-You can see the final `createTubeGeometry` function [here](). The full function also copies the `uv` attribute so that we can texture the tube if desired (e.g. adding normal mapping). We can refine the geometry later with the `subdivisions` and `numSides` parameters.
+See [createTubeGeometry.js](https://github.com/mattdesl/parametric-curves/blob/master/lib/geom/createTubeGeometry.js) for the final source. The full function also copies the `uv` attribute so that we can texture the tube if desired (e.g. adding normal mapping). We can refine the geometry later with the `subdivisions` and `numSides` parameters.
 
 With this utility function, we can create a new ThreeJS geometry:
 
@@ -67,16 +67,18 @@ const subdivisions = 50;
 const geometry = createTubeGeometry(numSides, subdivisions);
 ```
 
-## Setting up the Shader
+# Setting up the Shader
 
-The next step is to create a material that encapsulates our snazzy vertex shader. We'll be using [glslify]() here to pre-process our shaders and make our lives a bit easier.
+The next step is to create a material that encapsulates our snazzy vertex shader. We'll be using [glslify](https://github.com/stackgl/glslify) here to pre-process our shaders and make our lives a bit easier.
 
 ```js
 const glslify = require('glslify');
 
+const vert = glslify(__dirname + '/../shaders/tube.vert');
+const frag = glslify(__dirname + '/../shaders/tube.frag');
 const material = new THREE.RawShaderMaterial({
-  vertexShader: glslify(path.resolve(__dirname, '../shaders/tube.vert')),
-  fragmentShader: glslify(path.resolve(__dirname, '../shaders/tube.frag')),
+  vertexShader: vert,
+  fragmentShader: frag,
   side: THREE.FrontSide,
   extensions: {
     deriviatives: true
@@ -107,20 +109,20 @@ scene.add(mesh);
 
 The only gotcha is that we should disable frustum culling, since our geometry only contains a 1-dimensional `position` attribute which causes issues with ThreeJS's built-in frustum culling.
 
-## The Vertex Shader
+# The Vertex Shader
 
 There are two key functions: the parametric function, and solving the Frenet-Serret frame.
 
 You can follow along with the complete shader here:  
-[shader]()
+[shaders/tube.vert](https://github.com/mattdesl/parametric-curves/blob/master/lib/shaders/tube.vert)
 
-#### The Parametric Function
+## The Parametric Function
+
+The parametric function is the most important one, as it allows us to manipulate the design and shape of our curves. Later, we'll explore how we can create some more interesting functions, but for now we want to just build a tube that undulates along the Y axis like a wave.
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/parametric.png?raw=true" width="50%" />
 
-> :bulb: **Tip:** You can enter parametric equations into Google to see how they look!
-
-The parametric function is the most important one, as it allows us to manipulate the design and shape of our curves. Later, we'll explore how we can create some more interesting functions, but for now we want to just build a tube that undulates along the Y axis like a wave.
+> **Tip:** You can enter parametric equations into Google to see how they look!
 
 The input to this function will be *t*, the arc length of the curve normalized to `[0.0 .. 1.0]` range, where `0.0` is the start point of the curve and `1.0` is the end point. However, many equations will also work with inputs below zero and above one, which might be useful if you're altering the *t* parameter before computing the curve.
 
@@ -140,7 +142,7 @@ Using this as our parametric equation will give us the following animated curve:
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/loop1.gif?raw=true" width="50%" />
 
-#### Solving the Frenet-Serret Frame
+## Solving the Frenet-Serret Frame
 
 Once we have a `sample(t)` function, we can use it to construct the normals and position for the tube geometry at each vertex.
 
@@ -149,17 +151,17 @@ By sampling the current and next point in the curve, we can find the **T**angent
 With the computed frame, we can extrude away from the center line of the curve using the `angle` attribute we stored earlier. We multiply the extrusion by `volume`, a 2D vector which acts as the radius (or thickness) of our tube. Since it's 2D, we could "pinch" the tube to look more like a flat or oval shape.
 
 ```glsl
-void createTube (float t, vec2 volume, out vec3 offset, out vec3 normal) {
+void createTube (float t, vec2 volume, out vec3 pos, out vec3 normal) {
   // find next sample along curve
   float nextT = t + (1.0 / lengthSegments);
 
   // sample the curve in two places
-  vec3 current = sample(t);
+  vec3 cur = sample(t);
   vec3 next = sample(nextT);
   
   // compute the Frenet-Serret frame
-  vec3 T = normalize(next - current);
-  vec3 B = normalize(cross(T, next + current));
+  vec3 T = normalize(next - cur);
+  vec3 B = normalize(cross(T, next + cur));
   vec3 N = -normalize(cross(B, T));
 
   // extrude outward to create a tube
@@ -169,11 +171,11 @@ void createTube (float t, vec2 volume, out vec3 offset, out vec3 normal) {
 
   // compute position and normal
   normal.xyz = normalize(B * circX + N * circY);
-  offset.xyz = current + B * volume.x * circX + N * volume.y * circY;
+  pos.xyz = cur + B * volume.x * circX + N * volume.y * circY;
 }
 ```
 
-## The Fragment Shader
+# The Fragment Shader
 
 The fragment shader is fairly basic: it decides whether to use the smooth normal we computed above, or whether to approximate a flat normal using `glsl-face-normal`.
 
@@ -204,7 +206,7 @@ With all that in place, we get a shaded tube that can fly around in 3D space.
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/shader.png?raw=true" width="50%" />
 
-## Designing with Math
+# Designing with Math
 
 Ok! Let's kick it up a notch by changing `sample(t)`, our parametric equation.
 
@@ -235,7 +237,7 @@ vec3 sample (float t) {
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/p2.jpg?raw=true" width="25%" />
 
-> :bulb: Try multiplying `angle` by a whole number to add more twists!
+> Try multiplying `angle` by a whole number to add more twists!
 
 ---
 
@@ -283,11 +285,11 @@ vec3 sample (float t) {
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/loop2.gif?raw=true" width="25%" />
 
-## Multiple Instances
-
-<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/final.jpg?raw=true" width="70%" />
+# Multiple Instances
 
 Things really start to take shape once you add in more curve meshes. For performance, they should all share the same geometry we created earlier.
+
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/final.jpg?raw=true" width="70%" />
 
 To achieve the screenshot above, our final parametric function looks similar but with some angles offset by an `index` uniform — a float from 0.0 to 1.0 which is the result of `meshIndex / (totalMeshes - 1)`. The image above uses 40 curves with 300 subdivisions and a random thickness per curve.
 
@@ -315,9 +317,10 @@ We're also modulating the per-vertex `volume` before solving the Frenet-Serret f
   vec2 volume = vec2(thickness);
 
   // animate the curve thickness
-  float volumeAngle = t * lengthSegments * 0.5 + index * 20.0 + time * 2.5;
-  float volumeMod = sin(volumeAngle) * 0.5 + 0.5;
-  volume += 0.01 * volumeMod;
+  float vOff = index * 20.0 + time * 2.5;
+  float vAngle = t * lengthSegments * 0.5 + vOff;
+  float vMod = sin(vAngle) * 0.5 + 0.5;
+  volume += 0.01 * vMod;
 
   ... createTube(...);
 ```
@@ -335,9 +338,9 @@ And, lastly, we add some fake rim lighting in the fragment step and mix it with 
   ...
 ```
 
-## Gotchas
+# Gotchas
 
-#### Twists & Vanishing Curves
+## Twists & Vanishing Curves
 
 As I mentioned in the intro, this technique has some serious downsides. One is that, depending on your equation, the Frenet-Serret frame might lead to chaotic twists in rotation. Below is a particularly bad edge case that shows a lot of twists:
 
@@ -365,15 +368,15 @@ vec3 sample (float t) {
 
 Again, you can enable the `ROBUST` define at the cost of performance, or jitter your components slightly so the line is no longer exactly straight.
 
-#### End Cap Normals
+## End Cap Normals
 
 Another unsolved problem in this demo is the normals of the end caps. They look a little puffy when using smooth normals, but ideally they should appear flat. I'd be curious to hear if others have an idea of how to solve this.
 
-#### Closed Curves
+## Closed Curves
 
 This demo does not attempt to render closed curves — it just so happens that, with the fast Frenet-Serret approach, the curve seems to close naturally. The same parametric equations with the `ROBUST` flag will *not* close properly, as Parallel Transport requires an additional (expensive) pass over the segments to close the curve properly.
 
-## Taking it Further
+# Taking it Further
 
 There are lots of interesting things we can do from here, like:
 
@@ -382,4 +385,3 @@ There are lots of interesting things we can do from here, like:
 - modulating the *t* parameter before sending it to the parametric equation, e.g. to make it appear like each curve is being drawn in.
 - use instanced buffer geometry to reduce the number of draw calls
 - use noise and texture reads in our parametric equation for a variety of effects
-
