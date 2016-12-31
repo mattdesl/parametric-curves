@@ -22,6 +22,7 @@
     "dom-css": "^2.1.0",
     "eases": "^1.0.8",
     "element-class": "^0.2.2",
+    "fastclick": "^1.0.6",
     "glsl-aastep": "^1.0.1",
     "glsl-blend-soft-light": "^1.0.5",
     "glsl-dither": "^1.0.1",

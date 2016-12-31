@@ -1,6 +1,6 @@
 ## Shaping Curves with Parametric Equations
 
-![intro](./demo2.jpg)
+![intro](https://github.com/mattdesl/parametric-curves/blob/master/blogpost/demo2.jpg?raw=true)
 
 This post explores a technique to render volumetric curves on the GPU — ideal for shapes like ribbons, tubes and rope. The curves are defined by a parametric equation in the vertex shader, allowing us to animate hundreds and even thosuands of curves with minimal overhead.
 
@@ -8,21 +8,21 @@ Parametric curves aren't a novel idea in WebGL; ThreeJS already supports somethi
 
 Instead, let's what we can accomplish with just a vertex shader. The technique presented here has various downsides and isn't very robust, but it can look great in certain cases and tends to be fast to compute. At the end of this post, we'll end up with something like the WebGL scene below — use your mouse on desktop or tap on mobile to interact with it.
 
-<iframe src="http://localhost:9966" style="border: 0;" scrolling="no" width="100%" height="400px"></iframe>
+<iframe src="https://parametric-curves.surge.sh/" style="border: 0; width: 1px; min-width: 100%;" scrolling="no" height="400px" scroll="auto"></iframe>
 
 I used this technique for the swirling 3D lines in my [Christmas Experiment](christmasexperiments.com/2016/19/sugar/) this year. The experiment also used parametric equations for the bouncing surface, so the concepts presented in this post can carry over to other areas.
 
-![xmas](./xmas.png)
+![xmas](https://github.com/mattdesl/parametric-curves/blob/master/blogpost/xmas.jpg?raw=true)
 
 I'm also using volumetric lines for a "neon tube" effect in an upcoming demo; you can see some screenshots here:
 
-![screenshots](./demo1.jpg)
+![volume](https://github.com/mattdesl/parametric-curves/blob/master/blogpost/demo1.jpg?raw=true)
 
 ## Building the Tube Geometry
 
 For this to work, we're going to re-purpose a `THREE.CylinderGeometry` so that our UVs, end caps and faces all line up like a regular cylinder geometry. If it goes to plan, we should be able to render a simple cylinder with our volumetric curve code.
 
-![cylinder](./cylinder.png)
+![cylinder](https://github.com/mattdesl/parametric-curves/blob/master/blogpost/cylinder.png?raw=true)
 
 However, our geometry won't work with the built-in ThreeJS shaders because it's composed of the following custom vertex attributes:
 
@@ -116,7 +116,7 @@ You can follow along with the complete shader here:
 
 #### The Parametric Function
 
-<img src="parametric.png" width="50%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/parametric.png?raw=true" width="50%" />
 
 > :bulb: **Tip:** You can enter parametric equations into Google to see how they look!
 
@@ -138,7 +138,7 @@ vec3 sample (float t) {
 
 Using this as our parametric equation will give us the following animated curve:
 
-<img src="loop1.gif" width="50%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/loop1.gif?raw=true" width="50%" />
 
 #### Solving the Frenet-Serret Frame
 
@@ -202,7 +202,7 @@ void main () {
 
 With all that in place, we get a shaded tube that can fly around in 3D space.
 
-<img src="shader.png" width="50%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/shader.png?raw=true" width="50%" />
 
 ## Designing with Math
 
@@ -218,7 +218,7 @@ vec3 sample (float t) {
 }
 ```
 
-<img src="p1.png" width="25%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/p1.jpg?raw=true" width="25%" />
 
 ---
 
@@ -233,7 +233,7 @@ vec3 sample (float t) {
 }
 ```
 
-<img src="p2.png" width="25%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/p2.jpg?raw=true" width="25%" />
 
 > :bulb: Try multiplying `angle` by a whole number to add more twists!
 
@@ -263,7 +263,7 @@ vec3 sample (float t) {
 
 The `r` (radius), `phi` and `theta` parameters can be a function of `t` to create some interesting shapes like [torus knots](http://paulbourke.net/geometry/knots/).
 
-<img src="p3.png" width="25%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/p3.jpg?raw=true" width="25%" />
 
 ---
 
@@ -281,11 +281,11 @@ vec3 sample (float t) {
 }
 ```
 
-<img src="loop2.gif" width="25%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/loop2.gif?raw=true" width="25%" />
 
 ## Multiple Instances
 
-<img src="final.png" width="70%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/final.jpg?raw=true" width="70%" />
 
 Things really start to take shape once you add in more curve meshes. For performance, they should all share the same geometry we created earlier.
 
@@ -347,13 +347,13 @@ vec3 sample (float t) {
 }
 ```
 
-<img src="frenet1.png" width="40%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/frenet1.jpg?raw=true" width="40%" />
 
 To solve this, we need to use Parallel Transport frames. For each vertex, we need to solve all the Frenet-Serret frames that have come before it. This is extremely expensive, and depending on your subdivision and number of sides, you might only be able to render a handful of curves before you reach a vertex shader bottleneck.
 
 The final vertex shader provides a `ROBUST` define flag that solves this issue, at the expense of performance:
 
-<img src="frenet2.png" width="40%" />
+<img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/frenet2.jpg?raw=true" width="40%" />
 
 A similar problem arises with exactly straight lines, in which will disappear entirely using our fast Frenet-Serret approach.
 

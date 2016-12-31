@@ -1,3 +1,5 @@
+require('fastclick')(document.body);
+
 const query = require('./lib/util/query');
 const isMobile = require('./lib/util/isMobile');
 const createApp = require('./lib/createApp');
@@ -45,7 +47,7 @@ function start () {
   if (isMobile) app.canvas.oncontextmenu = () => false;
 
   app.canvas.addEventListener('touchstart', tap);
-  app.canvas.addEventListener('mousedown', tap);
+  if (!isMobile) app.canvas.addEventListener('mousedown', tap);
   if (isMobile) infoElement.textContent = 'tap to interact';
   infoElement.style.visibility = 'visible';
 
@@ -65,6 +67,7 @@ function start () {
   }
 
   function tap (ev) {
+    // ev.preventDefault();
     line.setPalette(palettes[paletteIndex++ % palettes.length]);
   }
 }
