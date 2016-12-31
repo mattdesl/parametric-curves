@@ -13,13 +13,16 @@ let paletteIndex = 0;
 const createTubes = require('./lib/components/createTubes');
 const touches = require('touches');
 
+const infoElement = document.querySelector('.info-container');
+
 const app = createApp({
-  canvas: document.querySelector('#canvas')
+  canvas: document.querySelector('#canvas'),
+  alpha: true
 });
 
-const background = 'hsl(0, 0%, 90%)';
+const background = 'hsl(0, 0%, 100%)';
 document.body.style.background = background;
-app.renderer.setClearColor(background, 1);
+app.renderer.setClearColor(0xffffff, 0);
 
 setupCursor();
 start();
@@ -47,49 +50,61 @@ function start () {
   app.scene.add(line.object3d);
 
   const skipFrames = query.skipFrames;
-  const iframe = inIframe();
   let intervalTime = 0;
-  let firstFrame = true;
-  let rendering = !iframe;
+
+  // no context menu on mobile...
+  if (isMobile) app.canvas.oncontextmenu = () => false;
 
   app.canvas.addEventListener('touchstart', tap);
   app.canvas.addEventListener('mousedown', tap);
+  if (isMobile) infoElement.textContent = 'tap to interact';
+  infoElement.style.visibility = 'visible';
 
-  if (iframe) {
-    if (isMobile) {
-      let timer;
-      let isTouchDown = false;
-      touches(app.canvas, {
-        filtered: true,
-        preventSimulated: false,
-        type: 'touch'
-      }).on('start', (ev) => {
-        ev.preventDefault();
-        rendering = true;
-        isTouchDown = true;
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(() => {
-          if (!isTouchDown) rendering = false;
-        }, 1500);
-      }).on('end', ev => {
-        ev.preventDefault();
-        isTouchDown = false;
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(() => {
-          rendering = false;
-        }, 1500);
-      });
-    } else {
-      app.canvas.addEventListener('mouseenter', () => { rendering = true; });
-      app.canvas.addEventListener('mouseleave', () => { rendering = false; });
-    }
-  }
+  // const iframe = inIframe();
+  // let firstFrame = true;
+  // let wasRendering = false;
+  // let rendering = !iframe;
+  // if (iframe) {
+  //   if (isMobile) {
+  //     let timer;
+  //     let isTouchDown = false;
+  //     touches(app.canvas, {
+  //       filtered: true,
+  //       preventSimulated: false,
+  //       type: 'touch'
+  //     }).on('start', (ev) => {
+  //       ev.preventDefault();
+  //       rendering = true;
+  //       isTouchDown = true;
+  //       if (timer) clearTimeout(timer);
+  //       timer = setTimeout(() => {
+  //         if (!isTouchDown) rendering = false;
+  //       }, 1500);
+  //     }).on('end', ev => {
+  //       ev.preventDefault();
+  //       isTouchDown = false;
+  //       if (timer) clearTimeout(timer);
+  //       timer = setTimeout(() => {
+  //         rendering = false;
+  //       }, 1500);
+  //     });
+  //   } else {
+  //     app.canvas.addEventListener('mouseenter', () => { rendering = true; });
+  //     app.canvas.addEventListener('mouseleave', () => { rendering = false; });
+  //   }
+  // }
 
   if (query.renderOnce) tick(0);
   else createLoop(tick).start();
 
   function tick (dt = 0) {
-    if (!firstFrame && !rendering) return;
+    // const shouldRender = firstFrame || rendering;
+    // if (wasRendering !== shouldRender) {
+    //   wasRendering = shouldRender;
+    //   infoElement.style.visibility = shouldRender ? 'hidden' : 'visible';
+    // }
+    // if (!shouldRender) return;
+    // firstFrame = false;
     intervalTime += dt;
     if (intervalTime > 1000 / 20) {
       intervalTime = 0;
@@ -99,7 +114,6 @@ function start () {
     line.update(dt);
     app.tick(dt);
     app.render();
-    firstFrame = false;
   }
 
   function tap (ev) {

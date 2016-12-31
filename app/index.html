@@ -4,10 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, shrink-to-fit=0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <title>parametric-ribbons</title>
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:600" rel="stylesheet">
   <style>
-  canvas { display: block; }
+  @font-face {
+    font-family: 'Proxima Nova';
+    font-weight: 600;
+    src: url('assets/font/ProximaNovaBold.woff');
+  }
+  canvas {
+    display: block;
+    z-index: 10;
+  }
+  * {
+    -webkit-touch-callout:none;
+    -webkit-text-size-adjust:none;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+    -webkit-user-select:none;
+  }
   body {
+    font-family: 'Proxima Nova';
+    font-weight: 600;
     margin: 0;
   }
   .noselect {
@@ -27,25 +42,31 @@
     cursor: -moz-grab;
   }
   .grabbing {
-     cursor: -webkit-grabbing;
+    cursor: -webkit-grabbing;
     cursor: -moz-grabbing; 
   }
-  .info {
-    pointer-events: none;
+  .info-container {
+    opacity: 0.5;
+    z-index: -10;
     position: absolute;
-    top: 10px;
-    left: 10px;
-    font-family: 'Source Sans Pro';
-    font-weight: 600;
-    letter-spacing: 2px;
-    font-size: 12px;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    font-size: 10px;
+    text-align: center;
+    margin: auto;
     -webkit-font-smoothing: antialiased;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
   </style>
 </head>
 <body>
+  <div class="noselect info-container" style="visibility: hidden;">
+    hover + tap to interact
+  </div>
   <canvas id="canvas" class="noselect"></canvas>
-  <div class="info" class="noselect">TAP TO CHANGE COLORS</div>
   <script src="vendor/three.js"></script>
   <script src="vendor/RGBELoader.js"></script>
   <script src="vendor/HDRCubeTextureLoader.js"></script>
