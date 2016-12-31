@@ -1,5 +1,3 @@
-require('./lib/util/override-clone-uniforms')();
-
 const query = require('./lib/util/query');
 const isMobile = require('./lib/util/isMobile');
 const createApp = require('./lib/createApp');
@@ -11,7 +9,6 @@ const palettes = [ '#f7803c', '#b3204d', '#cbe86b', '#2b4e72', '#d4ee5e', '#ff00
 let paletteIndex = 0;
 
 const createTubes = require('./lib/components/createTubes');
-const touches = require('touches');
 
 const infoElement = document.querySelector('.info-container');
 
@@ -37,14 +34,6 @@ function setupCursor () {
   classes(app.canvas).add(query.orbitControls ? 'grab' : 'clickable');
 }
 
-function inIframe () {
-  try {
-    return window.self !== window.top;
-  } catch (e) {
-    return true;
-  }
-}
-
 function start () {
   const line = createTubes(app);
   app.scene.add(line.object3d);
@@ -60,51 +49,10 @@ function start () {
   if (isMobile) infoElement.textContent = 'tap to interact';
   infoElement.style.visibility = 'visible';
 
-  // const iframe = inIframe();
-  // let firstFrame = true;
-  // let wasRendering = false;
-  // let rendering = !iframe;
-  // if (iframe) {
-  //   if (isMobile) {
-  //     let timer;
-  //     let isTouchDown = false;
-  //     touches(app.canvas, {
-  //       filtered: true,
-  //       preventSimulated: false,
-  //       type: 'touch'
-  //     }).on('start', (ev) => {
-  //       ev.preventDefault();
-  //       rendering = true;
-  //       isTouchDown = true;
-  //       if (timer) clearTimeout(timer);
-  //       timer = setTimeout(() => {
-  //         if (!isTouchDown) rendering = false;
-  //       }, 1500);
-  //     }).on('end', ev => {
-  //       ev.preventDefault();
-  //       isTouchDown = false;
-  //       if (timer) clearTimeout(timer);
-  //       timer = setTimeout(() => {
-  //         rendering = false;
-  //       }, 1500);
-  //     });
-  //   } else {
-  //     app.canvas.addEventListener('mouseenter', () => { rendering = true; });
-  //     app.canvas.addEventListener('mouseleave', () => { rendering = false; });
-  //   }
-  // }
-
   if (query.renderOnce) tick(0);
   else createLoop(tick).start();
 
   function tick (dt = 0) {
-    // const shouldRender = firstFrame || rendering;
-    // if (wasRendering !== shouldRender) {
-    //   wasRendering = shouldRender;
-    //   infoElement.style.visibility = shouldRender ? 'hidden' : 'visible';
-    // }
-    // if (!shouldRender) return;
-    // firstFrame = false;
     intervalTime += dt;
     if (intervalTime > 1000 / 20) {
       intervalTime = 0;
