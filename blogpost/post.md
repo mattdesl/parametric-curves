@@ -373,11 +373,11 @@ vec3 sample (float t) {
 
 To solve this, we need to use [Parallel Transport frames](https://pdfs.semanticscholar.org/7e65/2313c1f8183a0f43acce58ae8d8caf370a6b.pdf). For each vertex, we need to solve all the Frenet-Serret frames that have come before it. This is extremely expensive, and depending on your subdivision and number of sides, you might only be able to render a handful of curves before you reach a vertex shader bottleneck.
 
-The final vertex shader provides a `ROBUST` define flag that solves this issue, at the expense of performance:
+The final vertex shader provides a `ROBUST` define flag [that solves this](https://github.com/mattdesl/parametric-curves/blob/45f321fd43af3a0786aa2dd4016931cc39325944/lib/shaders/tube.vert#L66-L162) issue, at the expense of performance:
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/frenet2.jpg?raw=true" width="40%" />
 
-<sup>See [here](https://github.com/mattdesl/parametric-curves/blob/954f1a8d865537543b832a8bf0e49363b8a90071/lib/components/createTubes.js#L30-L31) to enable the flag.</sup>
+<sup>See [here](https://github.com/mattdesl/parametric-curves/blob/45f321fd43af3a0786aa2dd4016931cc39325944/lib/components/createTubes.js#L30-L31) to enable the flag.</sup>
 
 A similar problem arises with exactly straight lines, in which will disappear entirely using our fast Frenet-Serret approach.
 
@@ -397,12 +397,19 @@ Another unsolved problem in this demo is the normals of the end caps. They look 
 
 This demo does not attempt to render closed curves — it just so happens that, with the fast Frenet-Serret approach, the curve seems to close naturally. The same parametric equations with the `ROBUST` flag will *not* close properly, as Parallel Transport requires an additional (expensive) pass over the segments to close the curve properly.
 
-# Taking it Further
+# Next Steps
 
 There are lots of interesting things we can do from here, like:
 
 - use a [custom MeshStandardMaterial](https://gist.github.com/mattdesl/034c5daf2cf5a01c458bc9584cbe6744) for shading and reflections
-- using HDR bloom for a "neon tube" effect
 - modulating the *t* parameter before sending it to the parametric equation, e.g. to make it appear like each curve is being drawn in.
 - use instanced buffer geometry to reduce the number of draw calls
 - use noise and texture reads in our parametric equation for a variety of effects
+- try different shapes to extrude the curve by `volume`, instead of just a circle (i.e. a star or rounded box)
+
+# Further Reading
+
+- [Parallel Transport Approach to Curve Framing](https://pdfs.semanticscholar.org/7e65/2313c1f8183a0f43acce58ae8d8caf370a6b.pdf)
+- [Spline Extrustions, Tubes and Knots of Sorts](http://www.lab4games.net/zz85/blog/2012/04/24/spline-extrusions-tubes-and-knots-of-sorts/)
+
+Enjoy!
