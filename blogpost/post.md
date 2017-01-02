@@ -10,7 +10,7 @@ Instead, let's what we can accomplish with just a vertex shader. The technique p
 
 <iframe src="https://parametric-curves.surge.sh/" style="border: 0; width: 1px; min-width: 100%;" scrolling="no" height="400px" scroll="auto"></iframe>
 
-I used this technique for the swirling 3D lines in my [Christmas Experiment](https://christmasexperiments.com/2016/19/sugar/) this year. The experiment also used parametric equations for the bouncing surface, so the concepts presented in this post can carry over to other areas.
+I used this technique for the swirling 3D lines in my [Christmas Experiment](https://christmasexperiments.com/2016/19/sugar/) this year. The same experiment uses parametric equations for the bouncing surface — so the concepts here will carry over nicely to other areas.
 
 ![xmas](https://github.com/mattdesl/parametric-curves/blob/master/blogpost/xmas.jpg?raw=true)
 
@@ -20,7 +20,7 @@ I'm also using volumetric lines for a "neon tube" effect in an upcoming demo; yo
 
 # Source Code
 
-The source code for the above WebGL demo can be found below:
+You can follow along with the source code for the interactive demo here:
 
 https://github.com/mattdesl/parametric-curves/
 
@@ -40,6 +40,14 @@ When building the geometry, we also have to decide how much to subdivide our cur
 Some pseudocode:
 
 ```js
+const temp = new THREE.Vector2();
+
+const baseGeometry = new THREE.CylinderGeometry(
+  1, 1, 1, // radius and length
+  numSides,
+  subdivisions
+);
+
 // will be used as vertex attributes
 const angles = [];
 const positions = [];

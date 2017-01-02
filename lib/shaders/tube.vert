@@ -71,19 +71,9 @@ vec3 getTangent (vec3 a, vec3 b) {
   return normalize(b - a);
 }
 
-vec4 quaternionFromAxisAngle (vec3 axis, float angle) {
+void rotateByAxisAngle (inout vec3 normal, vec3 axis, float angle) {
   // http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
   // assumes axis is normalized
-  float halfAngle = angle / 2.0;
-  float s = sin(halfAngle);
-  return vec4(axis * s, cos(halfAngle));
-}
-
-vec3 quaternionRotation (vec4 quat, vec3 vector)   {
-  return vector + 2.0 * cross(quat.xyz, cross(quat.xyz, vector) + quat.w * vector);
-}
-
-void rotateByAxisAngle (inout vec3 normal, vec3 axis, float angle) {
   float halfAngle = angle / 2.0;
   float s = sin(halfAngle);
   vec4 quat = vec4(axis * s, cos(halfAngle));
@@ -91,6 +81,8 @@ void rotateByAxisAngle (inout vec3 normal, vec3 axis, float angle) {
 }
 
 void createTube (float t, vec2 volume, out vec3 outPosition, out vec3 outNormal) {
+  // Reference:
+  // https://github.com/mrdoob/three.js/blob/b07565918713771e77b8701105f2645b1e5009a7/src/extras/core/Curve.js#L268
   float nextT = t + (1.0 / lengthSegments);
 
   // find first tangent
