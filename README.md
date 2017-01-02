@@ -12,6 +12,19 @@ http://parametric-curves.surge.sh/
 
 https://mattdesl.svbtle.com/shaping-curves-with-parametric-equations
 
+#### Running Locally
+
+The demo can be run locally with:
+
+```sh
+git clone https://github.com/mattdesl/parametric-curves.git
+cd parametric-curves
+npm install
+npm run start
+```
+
+Then open `localhost:9966`.
+
 ## License
 
 MIT, see [LICENSE.md](http://github.com/mattdesl/parametric-curves/blob/master/LICENSE.md) for details.
