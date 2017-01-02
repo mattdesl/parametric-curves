@@ -4,6 +4,8 @@ Fast animated curve rendering on the GPU with parametric equations.
 
 <img src="blogpost/final.jpg" width="50%" />
 
+The vertex shader supports local Frenet-Serret frames (approximations) and more robust Parallel Transport frames (at expense of performance).
+
 #### Live Demo
 
 http://parametric-curves.surge.sh/

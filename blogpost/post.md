@@ -251,11 +251,11 @@ vec3 sample (float t) {
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/p2.jpg?raw=true" width="25%" />
 
-> Try multiplying `angle` by a whole number to add more twists!
+> **Tip:** Try multiplying `angle` by a whole number to add more twists!
 
 ---
 
-We can also use a 3D spherical coordinates as a base, instead of a 2D circle.
+We can also use 3D spherical coordinates as a base, instead of a 2D circle.
 
 ```glsl
 vec3 spherical (float r, float phi, float theta) {
@@ -277,13 +277,15 @@ vec3 sample (float t) {
 }
 ```
 
-The `r` (radius), `phi` and `theta` parameters can be a function of `t` to create some interesting shapes like [torus knots](http://paulbourke.net/geometry/knots/).
+Which gives us:
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/p3.jpg?raw=true" width="25%" />
 
 ---
 
-After some trial and error, we end up with a torus knot like this:
+The `r` (radius), `phi` and `theta` parameters can be a function of `t` to create some interesting shapes like [torus knots](http://paulbourke.net/geometry/knots/).
+
+After some trial and error, we end up with something like this:
 
 ```glsl
 vec3 sample (float t) {
@@ -305,9 +307,10 @@ Things really start to take shape once you add in more curve meshes. For perform
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/final.jpg?raw=true" width="70%" />
 
-To achieve the screenshot above, our final parametric function looks similar but with some angles offset by an `index` uniform — a float from 0.0 to 1.0 which is the result of `meshIndex / (totalMeshes - 1)`. The image above uses 40 curves with 300 subdivisions and a random thickness per curve.
+Our final parametric function looks very similar to our last step, but with some angles offset by an `index` uniform. The `index` float ranges from 0.0 to 1.0 and is the result of `meshIndex / (totalMeshes - 1)`. The image above uses 40 curves with 300 subdivisions and a random thickness per curve mesh.
 
 ```glsl
+// import an easing function for nicer animations
 #pragma glslify: ease = require('glsl-easings/exponential-in-out');
 
 vec3 sample (float t) {
@@ -324,7 +327,7 @@ vec3 sample (float t) {
 }
 ```
 
-We're also modulating the per-vertex `volume` before solving the Frenet-Serret frame. This gives each curve some variety in its thickness.
+We're also modulating the per-vertex `volume` before solving the Frenet-Serret frame. This gives each curve some variety in thickness along its length.
 
 ```glsl
   // build our tube geometry
@@ -339,7 +342,7 @@ We're also modulating the per-vertex `volume` before solving the Frenet-Serret f
   ... createTube(...);
 ```
 
-And, lastly, we add some fake rim lighting in the fragment step and mix it with the Z-normal of the tube:
+Then we add some fake rim lighting in the fragment step and mix it with the Z-normal of the tube:
 
 ```glsl
   ...
@@ -352,7 +355,7 @@ And, lastly, we add some fake rim lighting in the fragment step and mix it with 
   ...
 ```
 
-The final shaders (see [here](https://github.com/mattdesl/parametric-curves/tree/master/lib/shaders)) also includes a small effect for color transitions.
+Lastly, we add a small effect for color transitions, which you can see in the final shaders [here](https://github.com/mattdesl/parametric-curves/tree/master/lib/shaders).
 
 # Gotchas
 
@@ -368,7 +371,7 @@ vec3 sample (float t) {
 
 <img src="https://github.com/mattdesl/parametric-curves/blob/master/blogpost/frenet1.jpg?raw=true" width="40%" />
 
-To solve this, we need to use Parallel Transport frames. For each vertex, we need to solve all the Frenet-Serret frames that have come before it. This is extremely expensive, and depending on your subdivision and number of sides, you might only be able to render a handful of curves before you reach a vertex shader bottleneck.
+To solve this, we need to use [Parallel Transport frames](https://pdfs.semanticscholar.org/7e65/2313c1f8183a0f43acce58ae8d8caf370a6b.pdf). For each vertex, we need to solve all the Frenet-Serret frames that have come before it. This is extremely expensive, and depending on your subdivision and number of sides, you might only be able to render a handful of curves before you reach a vertex shader bottleneck.
 
 The final vertex shader provides a `ROBUST` define flag that solves this issue, at the expense of performance:
 
