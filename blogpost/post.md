@@ -379,7 +379,7 @@ The final vertex shader provides a `ROBUST` define flag [that solves this](https
 
 <sup>See [here](https://github.com/mattdesl/parametric-curves/blob/45f321fd43af3a0786aa2dd4016931cc39325944/lib/components/createTubes.js#L30-L31) to enable the flag.</sup>
 
-A similar problem arises with exactly straight lines, in which will disappear entirely using our fast Frenet-Serret approach.
+A similar problem arises with exactly straight lines, which will disappear entirely using our fast Frenet-Serret approach.
 
 ```glsl
 vec3 sample (float t) {
@@ -405,7 +405,7 @@ There are lots of interesting things we can do from here, like:
 - modulating the *t* parameter before sending it to the parametric equation, e.g. to make it appear like each curve is being drawn in.
 - use instanced buffer geometry to reduce the number of draw calls
 - use noise and texture reads in our parametric equation for a variety of effects
-- try different shapes to extrude the curve by `volume`, instead of just a circle (i.e. a star or rounded box)
+- try extruding `volume` with a different shape, not just a circle (i.e. a star or rounded box)
 
 # Further Reading
 
