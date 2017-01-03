@@ -6,7 +6,7 @@ This post explores a technique to render volumetric curves on the GPU — ideal 
 
 Parametric curves aren't a novel idea in WebGL; ThreeJS already supports something called ExtrudeGeometry. You can read about some of its implementation details [here](http://www.lab4games.net/zz85/blog/2012/04/24/spline-extrusions-tubes-and-knots-of-sorts/). This class can be used to extrude a 3D curve or path into a volumetric line, like a 3D tube. However, since the code runs on the CPU and generates a new geometry, it isn't well suited for animating the curve every frame, let alone several hundred curves.
 
-Instead, let's what we can accomplish with just a vertex shader. The technique presented here has various downsides and isn't very robust, but it can look great in certain cases and tends to be fast to compute. At the end of this post, we'll end up with something like the WebGL scene below — use your mouse on desktop or tap on mobile to interact with it.
+Instead, let's see what we can accomplish with just a vertex shader. The technique presented here has various downsides and isn't very robust, but it can look great in certain cases and tends to be fast to compute. At the end of this post, we'll end up with something like the WebGL scene below — use your mouse on desktop or tap on mobile to interact with it.
 
 <iframe src="https://parametric-curves.surge.sh/" style="border: 0; width: 1px; min-width: 100%;" scrolling="no" height="400px" scroll="auto"></iframe>
 
